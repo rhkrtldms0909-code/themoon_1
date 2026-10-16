@@ -1,0 +1,486 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<style>body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
+<title>더문 안무 찾기</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Black+Han+Sans&family=IBM+Plex+Sans+KR:wght@400;500;600;700&display=swap">
+<style>
+/* Layout: 한 컬럼 스크롤. 소개 → 지도진 → 서비스 → 두 개의 문 → A 멤버십 찾기 → B 단품 목록 */
+:root{
+  --bg:#f3f4f8; --surface:#ffffff; --ink:#141a33; --muted:#5d647d; --line:#dde0ea;
+  --blue:#1f3fa8; --red:#d2283c; --chip:#eaedf6; --chip-on:#141a33; --chip-on-fg:#ffffff; --todo:#b7791f;
+  --display:"Black Han Sans","IBM Plex Sans KR","Apple SD Gothic Neo",sans-serif;
+  --body:"IBM Plex Sans KR","Apple SD Gothic Neo","Malgun Gothic",sans-serif;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#0e1222; --surface:#171c31; --ink:#eef0f8; --muted:#9aa1bb; --line:#2a3150;
+  --blue:#8ea4ff; --red:#ff6475; --chip:#20263f; --chip-on:#eef0f8; --chip-on-fg:#0e1222; --todo:#e3b155; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0e1222; --surface:#171c31; --ink:#eef0f8; --muted:#9aa1bb; --line:#2a3150;
+  --blue:#8ea4ff; --red:#ff6475; --chip:#20263f; --chip-on:#eef0f8; --chip-on-fg:#0e1222; --todo:#e3b155; color-scheme:dark}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--ink);font-family:var(--body);font-size:15px;line-height:1.65;padding-inline:16px;padding-block:28px 64px}
+.wrap{max-width:820px;margin:0 auto;display:flex;flex-direction:column;gap:56px}
+section{display:flex;flex-direction:column;gap:18px;scroll-margin-top:16px}
+h1,h2,h3{font-family:var(--display);font-weight:400;margin:0;line-height:1.2;text-wrap:balance}
+h2{font-size:clamp(24px,5vw,30px)}
+.eyebrow{font-size:12px;font-weight:700;letter-spacing:.12em;color:var(--red)}
+.sub{color:var(--muted);margin:0;max-width:60ch}
+.todo{color:var(--todo);border:1px dashed var(--todo);border-radius:6px;padding:1px 8px;font-size:13px;display:inline-block}
+a{color:inherit}
+button{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--blue);outline-offset:2px}
+
+/* Hero */
+.hero{gap:20px}
+.brand{font-size:13px;font-weight:700;letter-spacing:.1em;color:var(--muted)}
+.brand b{color:var(--red)}
+.hero h1{font-size:clamp(34px,8vw,56px)}
+.hero h1 span{color:var(--blue)}
+.belts{display:flex;gap:4px}
+.belts i{flex:1;height:6px;border-radius:2px;border:1px solid var(--line)}
+.doors{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.door{display:flex;flex-direction:column;gap:4px;text-decoration:none;background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:16px 18px;transition:border-color .15s,transform .15s}
+.door:hover{border-color:var(--blue);transform:translateY(-2px)}
+.door b{font-family:var(--display);font-weight:400;font-size:20px}
+.door span{font-size:13px;color:var(--muted)}
+.door em{font-style:normal;font-size:12px;font-weight:700;letter-spacing:.08em;color:var(--blue)}
+.door.big{padding:24px}
+.door.big b{font-size:26px}
+
+/* 지도진 */
+.coaches{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.coach{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:20px;display:flex;flex-direction:column;gap:12px;min-width:0}
+.coach-top{display:flex;gap:14px;align-items:center}
+.photo{width:64px;height:64px;border-radius:50%;flex:none;display:grid;place-items:center;font-family:var(--display);font-size:24px;background:var(--chip);color:var(--blue);border:1px dashed var(--todo)}
+.coach h3{font-size:22px}
+.coach .role{font-size:13px;color:var(--muted)}
+.quote{margin:0;font-size:16px;font-weight:500;padding-left:12px;border-left:3px solid var(--red)}
+details{border-top:1px solid var(--line);padding-top:10px}
+summary{cursor:pointer;font-size:14px;font-weight:600;color:var(--blue);list-style:none}
+summary::-webkit-details-marker{display:none}
+summary::after{content:" ▾"}
+details[open] summary::after{content:" ▴"}
+.detail{display:flex;flex-direction:column;gap:12px;padding-top:12px;font-size:14px}
+.detail h4{margin:0 0 4px;font-size:12px;letter-spacing:.08em;color:var(--muted)}
+.detail ul{margin:0;padding-left:18px}
+.links{display:flex;flex-wrap:wrap;gap:6px}
+.links a{font-size:13px;text-decoration:none;background:var(--chip);padding:4px 10px;border-radius:999px}
+.exclusive{display:flex;flex-direction:column;gap:8px;background:var(--chip);border-radius:12px;padding:14px}
+.exclusive .label{font-size:12px;font-weight:700;letter-spacing:.06em;color:var(--red)}
+.exclusive p{margin:0;font-size:13px;color:var(--muted)}
+.exclusive .btn{background:var(--red);color:#fff}
+.exclusive .btn[data-empty]{opacity:.85}
+
+/* 서비스 */
+.services{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.svc{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:16px;display:flex;flex-direction:column;gap:6px}
+.svc b{font-size:16px}
+.svc p{margin:0;font-size:13px;color:var(--muted)}
+.svc .n{font-size:12px;font-weight:700;color:var(--blue);font-variant-numeric:tabular-nums}
+
+/* 칩 */
+.q{display:flex;flex-direction:column;gap:8px}
+.q label,.qlabel{font-size:14px;font-weight:700}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{border:1px solid transparent;background:var(--chip);padding:8px 16px;border-radius:999px;cursor:pointer;font-size:14px}
+.chip:hover{border-color:var(--line)}
+.chip[aria-pressed="true"]{background:var(--chip-on);color:var(--chip-on-fg)}
+.chip small{opacity:.65;margin-left:4px;font-variant-numeric:tabular-nums}
+
+/* 멤버십 */
+.finder{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:20px;display:flex;flex-direction:column;gap:18px}
+.plans{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.plan{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:18px;display:flex;flex-direction:column;gap:10px;min-width:0}
+.plan.pick{border:2px solid var(--red);order:-1}
+.plan .badge{font-size:12px;font-weight:700;color:var(--red);letter-spacing:.06em}
+.plan h3{font-size:21px}
+.plan .price{font-weight:700;font-variant-numeric:tabular-nums}
+.plan ul{margin:0;padding-left:18px;font-size:13px;color:var(--muted);flex:1}
+.plan .why{font-size:13px;background:var(--chip);border-radius:8px;padding:8px 10px;margin:0}
+.btn{display:inline-flex;justify-content:center;align-items:center;gap:6px;font-weight:700;font-size:14px;text-decoration:none;background:var(--ink);color:var(--bg);padding:11px 16px;border-radius:10px}
+.plan.pick .btn{background:var(--red);color:#fff}
+.plans.has-pick{grid-template-columns:1fr 1fr}
+.plans.has-pick .plan.pick{grid-column:1/-1}
+
+/* 단품 */
+.tools{display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between}
+.search{flex:1;min-width:180px;max-width:320px;font:inherit;font-size:14px;padding:9px 12px;border-radius:10px;border:1px solid var(--line);background:var(--surface);color:var(--ink)}
+select{font:inherit;font-size:14px;padding:9px 10px;border-radius:10px;border:1px solid var(--line);background:var(--surface);color:var(--ink)}
+.count{font-size:13px;color:var(--muted)}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:10px}
+.item{display:flex;flex-direction:column;gap:6px;text-decoration:none;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:14px 16px;transition:border-color .15s}
+.item:hover{border-color:var(--blue)}
+.item .t{font-size:12px;font-weight:700;color:var(--blue)}
+.item b{font-size:16px;line-height:1.35}
+.item .d{font-size:13px;color:var(--muted);line-height:1.5}
+.item .tags{display:flex;flex-wrap:wrap;gap:4px}
+.item .row{display:flex;justify-content:flex-end;align-items:center;gap:8px;margin-top:auto;padding-top:6px}
+.item .go{font-size:13px;color:var(--muted)}
+.lv{font-size:11px;font-weight:700;padding:2px 8px;border-radius:999px;color:#fff}
+.lv-입문{background:#2e9e4f}.lv-초급{background:#2a5bd7}.lv-중급{background:#d2283c}.lv-상급{background:#141414;outline:1px solid var(--line)}
+.tag.use{background:var(--blue);color:var(--surface)}
+.frow{display:flex;flex-direction:column;gap:6px}
+.frow .qlabel{font-size:13px}
+.bar{display:flex;justify-content:space-between;align-items:center;gap:12px}
+.reset{background:none;border:none;color:var(--muted);text-decoration:underline;cursor:pointer;font-size:13px;padding:4px}
+.tag{font-size:11px;padding:2px 7px;border-radius:999px;background:var(--chip);color:var(--muted)}
+.nudge{background:var(--ink);color:var(--bg);border-radius:14px;padding:20px;display:flex;flex-wrap:wrap;gap:12px;align-items:center;justify-content:space-between}
+.nudge p{margin:0;max-width:46ch}
+.nudge .btn{background:var(--red);color:#fff}
+.note{font-size:12px;color:var(--muted)}
+footer{text-align:center;font-size:13px;color:var(--muted)}
+
+@media (max-width:640px){
+  .coaches,.services,.plans,.plans.has-pick{grid-template-columns:1fr}
+  .services{grid-template-columns:1fr 1fr}
+}
+@media (max-width:400px){.doors{grid-template-columns:1fr}}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}*{transition:none!important}}
+</style>
+</head>
+<body>
+
+<div class="wrap">
+
+  <!-- 소개 -->
+  <section class="hero" id="top">
+    <div class="brand"><b>THE MOON</b> · 더문 태권도 안무제작소</div>
+    <h1>흰띠부터 검은띠까지,<br>모두가 즐기는 <span>태권도 안무</span></h1>
+    <div class="belts" aria-hidden="true"><i style="background:#fff"></i><i style="background:#f2c524"></i><i style="background:#2e9e4f"></i><i style="background:#2a5bd7"></i><i style="background:#d2283c"></i><i style="background:#141414"></i></div>
+    <p class="sub">태권몸풀기, 태권체조, 음악품새부터 시범단 작품까지. 도장 수업과 무대에 바로 쓸 수 있는 안무를 만들어요.</p>
+    <div class="doors">
+      <a class="door" href="#membership"><em>A</em><b>멤버십으로 받아보기</b><span>매달 새 작품, 지난 작품까지 전부</span></a>
+      <a class="door" href="#shop"><em>B</em><b>작품 하나만 사기</b><span>67개 작품 유형별로 보기</span></a>
+    </div>
+  </section>
+
+  <!-- 지도진 -->
+  <section id="coaches">
+    <div class="eyebrow">지도진</div>
+    <h2>더문의 안무를 만드는 사람들</h2>
+    <div class="coaches">
+      <article class="coach">
+        <div class="coach-top">
+          <div class="photo" aria-label="사진 자리">박</div>
+          <div><h3>박선영</h3><div class="role">대표</div></div>
+        </div>
+        <p class="quote"><span class="todo">한 줄 메시지 (가치관·교육관) 입력 예정</span></p>
+        <div class="exclusive">
+          <span class="label">우리 도장만을 위한 안무</span>
+          <p>박선영 대표가 직접 출강해 우리 도장만의 작품을 만들어요. 다른 도장이나 시범단에 공유하거나 재판매하지 않는 단독 제작 작품이에요.</p>
+          <a class="btn" id="contactBtn" href="#" target="_blank" rel="noopener">박선영 대표 출강 문의하기 →</a>
+          <span class="note" id="contactNote"><span class="todo">문의 링크 연결 예정</span></span>
+        </div>
+        <details>
+          <summary>자세히 보기</summary>
+          <div class="detail">
+            <div><h4>주요 경력</h4><span class="todo">경력 입력 예정</span></div>
+            <div><h4>작품 스타일</h4>즐거운 태권체조. 초등부 시범단과 중고등부 수련생을 위한 작품을 만들어요. 3패키지의 태권몸풀기·태권체조·음악품새를 맡고 있어요.</div>
+            <div><h4>대표 작품</h4><div class="links" data-pick="1195,1174,1089"></div></div>
+            <div><h4>이 작품이 포함된 멤버십</h4><div class="links"><a href="#membership" data-plan="p3">3패키지</a><a href="#membership" data-plan="prem">프리미엄</a><a href="#membership" data-plan="all">3+프리미엄</a></div></div>
+          </div>
+        </details>
+      </article>
+      <article class="coach">
+        <div class="coach-top">
+          <div class="photo" aria-label="사진 자리">최</div>
+          <div><h3>최용락</h3><div class="role">코치</div></div>
+        </div>
+        <p class="quote"><span class="todo">한 줄 메시지 (가치관·교육관) 입력 예정</span></p>
+        <div class="exclusive">
+          <span class="label">우리 도장 태권체조 Upgrade!</span>
+          <p>최용락 코치가 우리 도장 태권체조의 동작 디테일, 대형, 퍼포먼스까지 태권체조 A to Z를 컨설팅해 드려요. 시간과 공간 제약 없이 온라인으로 진행돼요.</p>
+          <a class="btn" id="consultBtn" href="#" target="_blank" rel="noopener">1:1 온라인 컨설팅 신청하기 →</a>
+          <span class="note" id="consultNote"><span class="todo">신청 링크 연결 예정</span></span>
+        </div>
+        <details>
+          <summary>자세히 보기</summary>
+          <div class="detail">
+            <div><h4>주요 경력</h4><span class="todo">경력 입력 예정</span></div>
+            <div><h4>작품 스타일</h4>코어층 작품. 중고등부 시범단과 성인부를 위한 높은 난이도의 작품을 만들어요.</div>
+            <div><h4>대표 작품</h4><span class="todo">대표 작품 선정 예정</span></div>
+            <div><h4>이 작품이 포함된 멤버십</h4><div class="links"><a href="#membership" data-plan="prem">프리미엄</a><a href="#membership" data-plan="all">3+프리미엄</a></div></div>
+          </div>
+        </details>
+      </article>
+    </div>
+  </section>
+
+  <!-- 서비스 -->
+  <section id="services">
+    <div class="eyebrow">제공 서비스</div>
+    <h2>더문에서 받을 수 있는 것</h2>
+    <div class="services">
+      <div class="svc"><span class="n">단품 18개</span><b>태권몸풀기</b><p>수업 시작에 음악과 함께 몸을 깨우는 짧은 루틴</p></div>
+      <div class="svc"><span class="n">단품 30개</span><b>태권체조</b><p>태권도 동작을 음악에 엮은 체조. 수업과 발표회 무대에</p></div>
+      <div class="svc"><span class="n">단품 19개</span><b>음악품새</b><p>태극 1장~8장, 고려, 태백 품새에 음악을 입힌 작품</p></div>
+      <div class="svc"><span class="n">프리미엄</span><b>시범단 작품</b><p>같은 음악, 두 가지 난이도. 초등부부터 성인부 시범단까지</p></div>
+      <div class="svc"><span class="n">플랜 3개</span><b>멤버십</b><p>매달 새 작품을 받고, 플랜에 포함된 지난 작품도 모두 열람</p></div>
+      <a class="svc" href="#coaches" style="text-decoration:none"><span class="n">출강 문의</span><b>우리 도장 단독 제작</b><p>박선영 대표가 출강해 만드는, 공유·재판매 없는 우리 도장 전용 작품</p></a>
+    </div>
+  </section>
+
+  <!-- 두 개의 문 -->
+  <section>
+    <h2>어떻게 시작할까요?</h2>
+    <div class="doors">
+      <a class="door big" href="#membership"><em>A · 멤버십</em><b>꾸준히 받아보기</b><span>수업용, 시범단용, 둘 다. 목적에 맞는 플랜을 추천해 드려요.</span></a>
+      <a class="door big" href="#shop"><em>B · 단품</em><b>작품 하나만 사기</b><span>행사나 승급심사에 쓸 작품 하나가 필요할 때</span></a>
+    </div>
+  </section>
+
+  <!-- A. 멤버십 -->
+  <section id="membership">
+    <div class="eyebrow">A · 멤버십</div>
+    <h2>우리 도장에 맞는 멤버십 찾기</h2>
+    <p class="sub">가입하면 플랜에 포함된 작품을 지난 작품까지 모두 볼 수 있어요.</p>
+    <div class="finder">
+      <div class="q">
+        <div class="qlabel">어디에 쓰실 건가요?</div>
+        <div class="chips" id="q-use">
+          <button class="chip" id="use-class" data-v="class" aria-pressed="false">정규 수업용</button>
+          <button class="chip" id="use-demo" data-v="demo" aria-pressed="false">시범단·대회용</button>
+          <button class="chip" id="use-both" data-v="both" aria-pressed="false">둘 다</button>
+        </div>
+      </div>
+      <div class="q" id="q-age-wrap" hidden>
+        <div class="qlabel">시범단 연령대는요?</div>
+        <div class="chips" id="q-age">
+          <button class="chip" id="age-elem" data-v="elem" aria-pressed="false">초등부</button>
+          <button class="chip" id="age-teen" data-v="teen" aria-pressed="false">중고등·성인부</button>
+        </div>
+      </div>
+    </div>
+    <div class="plans" id="plans"></div>
+  </section>
+
+  <!-- B. 단품 -->
+  <section id="shop">
+    <div class="eyebrow">B · 단품</div>
+    <h2>단품으로 살 수 있는 작품</h2>
+    <div class="chips" id="tabs"></div>
+    <div class="finder" id="filters"></div>
+    <div class="tools">
+      <input class="search" id="search" type="search" placeholder="곡 제목으로 찾기" aria-label="곡 제목으로 찾기">
+      <select id="sort" aria-label="정렬">
+        <option value="new">최신순</option>
+        <option value="easy">쉬운 순</option>
+        <option value="hard">어려운 순</option>
+      </select>
+    </div>
+    <div class="bar"><span class="count" id="count"></span><button class="reset" id="resetB" type="button" hidden>필터 초기화</button></div>
+    <div class="grid" id="grid"></div>
+    <div class="nudge">
+      <p><b>두 개 이상 필요하신가요?</b><br>3패키지 하나로 몸풀기·체조·음악품새 작품을 모두 볼 수 있어요.</p>
+      <a class="btn" href="#membership">멤버십 보기 →</a>
+    </div>
+  </section>
+
+  <footer>더문 태권도 THE MOON TKD · <a href="https://fanding.kr/@themoontkd/" target="_blank" rel="noopener">팬딩 페이지 바로가기</a></footer>
+</div>
+
+<script>
+const BASE="https://fanding.kr/@themoontkd/";
+/* 출강 문의 링크: 카카오톡 채널, 구글폼 등 주소를 넣으면 버튼이 연결돼요 */
+const CONTACT_URL="";   // 박선영 대표 출강 문의
+const CONSULT_URL="";   // 최용락 코치 1:1 온라인 컨설팅
+[["contactBtn","contactNote",CONTACT_URL],["consultBtn","consultNote",CONSULT_URL]].forEach(([bid,nid,url])=>{
+  const b=document.getElementById(bid);
+  if(url){b.href=url;document.getElementById(nid).hidden=true;}
+  else{b.dataset.empty="1";b.addEventListener("click",e=>e.preventDefault());}});
+const PLANS={
+  p3:{name:"3패키지",price:"월 60,000원",url:BASE+"membership/plan/10028/",
+      who:"전 연령 수업용 (유치부·초등부·중등부)",
+      items:["박선영 대표의 태권몸풀기","태권체조","음악품새","추가 영상"]},
+  prem:{name:"프리미엄",price:null,url:BASE+"membership/plan/10558/",
+      who:"시범단용 (초등부~성인부)",
+      items:["같은 음악, 두 가지 난이도","최용락 코치의 코어층 작품 (중고등부 시범단·성인부)","박선영 대표의 즐거운 태권체조 (초등부 시범단·중고등부 수련생)"]},
+  all:{name:"3+프리미엄",price:null,url:BASE+"membership/plan/10559/",
+      who:"수업과 시범단 모두",
+      items:["3패키지 + 프리미엄을 할인가로","더문의 모든 페이지 잠금 해제"]}
+};
+
+/* [id, 유형, 제목, 난이도, 분위기, 품새, 소개] — 난이도·소개는 팬딩 상세 페이지 기준 */
+const W=[
+[1200,"체조","퇴사할게요","초급","신나는",0,"유치부부터 중고등부까지 모두 즐기는 작품"],
+[1196,"품새","붉은 노을 (태극 5장)","중급","멋진",["5"],"태극 5장을 배웠다면 누구나"],
+[1195,"체조","BiiiG","중급","멋진",0,"나도 빅뱅이 될 수 있는 기회"],
+[1194,"몸풀기","하트브레이커","입문","신나는",0,"기초체력과 기본동작을 함께"],
+[1177,"품새","아드레날린 (태극 8장)","중급","멋진",["8"],"태극 8장을 배웠다면 누구나"],
+[1176,"몸풀기","플라이 업","입문","신나는",0,"수업 시작 전 체력·근력 운동으로 몸풀기"],
+[1174,"체조","프리티걸","중급","귀여운",0,"태권 공주들이 함께하는 태권체조"],
+[1156,"품새","PrettyGirl (1장, 7장)","초급","귀여운",["1","7"],"저학년·고학년이 함께. 태극 1장과 7장 두 가지"],
+[1154,"몸풀기","비행기","입문","신나는",0,"기본동작과 기초체력을 한 번에"],
+[1153,"체조","애국가","중급","멋진",0,"모두가 한마음으로 하는 태권체조"],
+[1130,"품새","파도 (태극 2장)","입문","신나는",["2"],"무릎올리기·앞차기 연습 태권체조 포함"],
+[1129,"체조","화개장터","초급","신나는",0,"반복 구간으로 외우기 쉽게. 기본 동작 총출동"],
+[1128,"몸풀기","사랑의 배터리","입문","귀여운",0,"흰띠 유치부도 함께"],
+[1095,"품새","RUDE (태극 3장)","초급","신나는",["3"],"태극 3장과 태권체조를 함께"],
+[1094,"품새","It's Me (태극 8장)","중급","신나는",["8"],"어려운 춤 동작을 쉽게 바꾼 태극 8장"],
+[1090,"몸풀기","CANDY","입문","신나는",0,"관장님, 사범님도 다 함께"],
+[1089,"체조","RED RED","중급","신나는",0,"태권도 릴스 챌린지 도전"],
+[1054,"몸풀기","소문의 낙원","입문","귀여운",0,"흰띠 유치부도 함께. 천천히 스트레칭과 기초체력"],
+[1052,"체조","캐치캐치","중급","신나는",0,"태극 7장을 응용한 태권체조"],
+[1003,"체조","버터플라이","중급","멋진",0,"남녀노소 모두가 한마음으로"],
+[979,"몸풀기","바라밤","입문","신나는",0,"기본동작 총집합. 흰띠 유치부도 가능"],
+[855,"품새","다시 만난 오늘","초급","신나는",["4"],"태극 4장과 간단한 태권체조"],
+[854,"체조","404 new era","중급","멋진",0,"여자 수련생·시범단을 위한 작품"],
+[844,"몸풀기","프린스핑송","입문","귀여운",0,"인기 노래와 함께하는 몸풀기"],
+[713,"품새","아파트 (태극 2장 + 8장)","초급","신나는",["2","8"],"도장 수련생 모두가 함께"],
+[711,"체조","꾸리스마스","초급","귀여운",0,"유치부부터 지도자까지 웃음 나는 크리스마스 체조"],
+[690,"품새","ZOO (2장 + 8장)","초급","귀여운",["2","8"],"주토피아 노래와 함께하는 2장·8장"],
+[685,"몸풀기","슈퍼맨","입문","신나는",0,"자막 보고 기합 외치며 텐션 업"],
+[682,"품새","내 이름 맑음 (태극 1장)","초급","귀여운",["1"],"유치부도 따라 할 수 있는 태극 1장"],
+[681,"품새","Whiplash","초급","멋진",["4"],"진지하고 절도 있는 태극 4장"],
+[679,"품새","홈스윗홈 (태백)","상급","멋진",["태백"],"멋지고 강한 음악. 유품자 수련생에게"],
+[678,"몸풀기","빙고","입문","신나는",0,"남녀노소 모두 즐겁게"],
+[672,"체조","할리우드 액션","중급","멋진",0,"시범단·선수단 친구들에게 추천"],
+[671,"체조","앗 뜨거","중급","신나는",0,"텐션이 아주 뜨거운 작품"],
+[670,"품새","음악품새 1·2·3장 묶음","초급","신나는",["1","2","3"],"청바지·REBEL HEART·HAPPY로 1~3장"],
+[669,"몸풀기","노는 게 제일 좋아","입문","신나는",0,"록 버전으로 쉼 없이 움직이는 몸풀기"],
+[667,"몸풀기","어이!","입문","신나는",0,"태권몸풀기 최고 인기 작품"],
+[666,"체조","마음 따라 뛰는 건 멋지지 않아?","상급","멋진",0,"야외 시범에 쓸 수 있는 퀄리티"],
+[665,"몸풀기","케로로","입문","귀여운",0,"기초체력·기초스텝·무릎올리기"],
+[664,"품새","동요(키즈) 묶음 (1장~3장)","초급","귀여운",["1","2","3"],"동요로 하는 체력 + 음악품새 + 태권체조"],
+[663,"체조","흥","중급","신나는",0,"초등부 친구들의 흥을 뽐내는 작품"],
+[662,"체조","승리를 위하여","중급","멋진",0,"태극 7장·8장을 응용한 태권체조"],
+[661,"품새","style (태극 2장)","초급","멋진",["2"],"태극 2장 정박에 맞춘 음악품새"],
+[660,"몸풀기","까탈레나","입문","신나는",0,"몸풀기와 유산소를 확실하게"],
+[659,"체조","OVER DRIVE","중급","멋진",0,"유품자 친구들을 위한 작품"],
+[658,"몸풀기","뿜뿜","입문","신나는",0,"수업 시작 전 텐션 업"],
+[657,"품새","골든 (고려)","중급","멋진",["고려"],"태권체조 동작 없이 고려 품새 정박"],
+[655,"체조","ETA (겨루기)","중급","신나는",0,"태권체조로 겨루기 스텝 연습"],
+[654,"체조","풍선","초급","귀여운",0,"남녀노소 즐길 수 있는 태권체조"],
+[653,"체조","후라이의 꿈","초급","귀여운",0,"학부모 공개수업 인기 1위. 유치부·저학년의 깜찍함"],
+[637,"체조","나는 문제없어","초급","신나는",0,"유급자 가능. 공개수업·야외 시범 추천"],
+[631,"품새","오리 날다 (태극 1장)","입문","귀여운",["1"],"유치부도 함께하는 태극 1장"],
+[629,"몸풀기","솜사탕","입문","귀여운",0,"흰띠 유치부도 가능한 몸풀기"],
+[620,"체조","스파게티","상급","멋진",0,"여자 수련생들의 눈이 반짝이는 태권체조"],
+[569,"품새","Your Idol (태극 5장)","초급","신나는",["5"],"태극 5장을 응용한 짧은 태권체조 포함"],
+[567,"체조","마루는 강쥐","초급","귀여운",0,"초특급 귀여운 태권체조"],
+[565,"체조","내 얘길 들어봐","초급","신나는",0,"밝고 경쾌한 태권체조"],
+[564,"품새","소다팝 (태극 1장)","입문","신나는",["1"],"소다팝으로 하는 태극 1장"],
+[563,"체조","샹하이 로맨스","초급","귀여운",0,"오렌지캬라멜 노래로 하는 태권체조"],
+[555,"체조","하나되어 (시범용)","상급","멋진",0,"오프닝·엔딩 시범용. 시범단 난이도"],
+[554,"체조","하나되어 (수련용)","초급","멋진",0,"가슴이 뜨거워지는 음악, 수련생용 버전"],
+[553,"몸풀기","우리의 꿈","입문","신나는",0,"더문의 9번째 태권몸풀기"],
+[552,"몸풀기","HOT 뜨거","입문","신나는",0,"뜨겁게 시작하는 몸풀기"],
+[550,"체조","뛰어","초급","신나는",0,"춤 동작을 아이들이 따라 하기 쉽게 바꾼 작품"],
+[549,"체조","소다팝","중급","신나는",0,"시범에도 쓸 동작 퀄리티. 유품자 추천"],
+[548,"체조","골든","초급","멋진",0,"빨간띠 수준 동작으로 수련생 모두 함께"],
+[546,"체조","질풍가도","중급","신나는",0,"세 번 하면 땀이 흐르는 작품"]
+];
+/* 연령: 난이도 기준 + 소개에 적힌 대상 */
+const AGE_BY_LV={"입문":["k","e"],"초급":["e"],"중급":["e","t"],"상급":["t"]};
+const AGE_FIX={1200:["k","e","t"],1003:["k","e","t"],654:["k","e","t"],678:["k","e","t"],653:["k","e"],682:["k","e"],631:["k","e"],711:["k","e","t"],664:["k","e"],548:["e","t"],1156:["e"],663:["e"],659:["t"],679:["t"],549:["t"],854:["t"]};
+const USE_FIX={555:["시범"],666:["시범"],672:["시범"],637:["시범","공개수업"],549:["시범"],854:["시범"],653:["공개수업"],711:["공개수업"],655:["겨루기"]};
+const LV=["입문","초급","중급","상급"];
+const W2=W.map(([id,type,title,lv,mood,ps,d])=>({id,type,title,lv,mood,ps:ps||null,d,ages:AGE_FIX[id]||AGE_BY_LV[lv],use:USE_FIX[id]||[],url:BASE+"course/"+id+"/"}));
+W.length=0;W.push(...W2);
+const TYPE_LABEL={"몸풀기":"태권몸풀기","체조":"태권체조","품새":"음악품새"};
+const $=s=>document.querySelector(s);
+
+/* 지도진 대표 작품 */
+document.querySelectorAll("[data-pick]").forEach(el=>{
+  el.innerHTML=el.dataset.pick.split(",").map(id=>{const w=W.find(x=>x.id==id);return `<a href="${w.url}" target="_blank" rel="noopener">${TYPE_LABEL[w.type]} · ${w.title}</a>`}).join("");
+});
+
+/* ===== A. 멤버십 ===== */
+const A={use:null,age:null};
+function pickPlan(){
+  if(A.use==="class") return {id:"p3",why:"수업에 쓸 몸풀기·체조·음악품새를 매달 받아볼 수 있어요. 유치부부터 중등부까지 모두 써요."};
+  if(A.use==="both") return {id:"all",why:"수업용 3패키지와 시범단용 프리미엄을 함께, 할인된 가격으로 받아요."};
+  if(A.use==="demo"){
+    if(A.age==="elem") return {id:"prem",why:"초등부 시범단에는 박선영 대표의 즐거운 태권체조가 맞아요. 같은 음악의 코어층 작품도 함께 받아요."};
+    if(A.age==="teen") return {id:"prem",why:"중고등·성인부 시범단에는 최용락 코치의 코어층 작품이 맞아요. 같은 음악의 쉬운 버전도 함께 받아요."};
+    return {id:"prem",why:"시범단 연령을 고르면 어떤 작품이 맞는지 알려드려요."};
+  }
+  return null;
+}
+function renderPlans(){
+  document.querySelectorAll("#q-use .chip").forEach(c=>c.setAttribute("aria-pressed",c.dataset.v===A.use));
+  document.querySelectorAll("#q-age .chip").forEach(c=>c.setAttribute("aria-pressed",c.dataset.v===A.age));
+  $("#q-age-wrap").hidden=A.use!=="demo";
+  const pick=pickPlan();
+  $("#plans").classList.toggle("has-pick",!!pick);
+  $("#plans").innerHTML=Object.entries(PLANS).map(([id,p])=>{
+    const on=pick&&pick.id===id;
+    return `<article class="plan${on?" pick":""}">
+      ${on?'<div class="badge">추천 플랜</div>':""}
+      <h3>${p.name}</h3>
+      <div class="price">${p.price||'<span class="todo">가격 입력 예정</span>'}</div>
+      <div class="note">${p.who}</div>
+      <ul>${p.items.map(i=>`<li>${i}</li>`).join("")}</ul>
+      ${on?`<p class="why">${pick.why}</p>`:""}
+      <a class="btn" href="${p.url}" target="_blank" rel="noopener">${p.name} 가입하기 →</a>
+    </article>`;
+  }).join("");
+}
+$("#q-use").addEventListener("click",e=>{const c=e.target.closest(".chip");if(!c)return;A.use=A.use===c.dataset.v?null:c.dataset.v;if(A.use!=="demo")A.age=null;renderPlans();});
+$("#q-age").addEventListener("click",e=>{const c=e.target.closest(".chip");if(!c)return;A.age=A.age===c.dataset.v?null:c.dataset.v;renderPlans();});
+document.querySelectorAll("[data-plan]").forEach(a=>a.addEventListener("click",()=>{
+  const p=a.dataset.plan;A.use=p==="p3"?"class":p==="all"?"both":"demo";A.age=null;renderPlans();
+}));
+
+/* ===== B. 단품 ===== */
+const AGE_LABEL={k:"유치부",e:"초등부",t:"중고등부"};
+const B={tab:"전체",lv:null,age:null,mood:null,use:null,ps:null,q:"",sort:"new"};
+const TABS=["전체","몸풀기","체조","품새"];
+const FILTERS=[
+  {key:"lv",label:"난이도",opts:LV.map(v=>[v,v])},
+  {key:"age",label:"연령대",opts:[["k","유치부"],["e","초등부"],["t","중고등부"]]},
+  {key:"mood",label:"분위기",opts:[["신나는","신나는"],["귀여운","귀여운"],["멋진","멋진"]]},
+  {key:"use",label:"이럴 때 추천",opts:[["공개수업","학부모 공개수업"],["시범","시범 공연"],["겨루기","겨루기 연습"]]},
+  {key:"ps",label:"아이들이 배우는 품새",only:"품새",opts:["1","2","3","4","5","7","8","고려","태백"].map(p=>[p,/\d/.test(p)?"태극 "+p+"장":p])}
+];
+function match(w,skip){
+  return (B.tab==="전체"||w.type===B.tab)
+   &&(skip==="lv"||!B.lv||w.lv===B.lv)
+   &&(skip==="age"||!B.age||w.ages.includes(B.age))
+   &&(skip==="mood"||!B.mood||w.mood===B.mood)
+   &&(skip==="use"||!B.use||w.use.includes(B.use))
+   &&(skip==="ps"||!B.ps||(w.ps&&w.ps.includes(B.ps)))
+   &&(!B.q||w.title.toLowerCase().includes(B.q.toLowerCase()));
+}
+function renderShop(){
+  $("#tabs").innerHTML=TABS.map(t=>{const n=t==="전체"?W.length:W.filter(w=>w.type===t).length;
+    return `<button class="chip" id="tab-${t}" data-v="${t}" aria-pressed="${B.tab===t}">${t==="전체"?"전체":TYPE_LABEL[t]}<small>${n}</small></button>`}).join("");
+  $("#filters").innerHTML=FILTERS.filter(f=>!f.only||f.only===B.tab).map(f=>{
+    const opts=f.opts.map(([v,l])=>{const n=W.filter(w=>{const o=B[f.key];B[f.key]=v;const r=match(w);B[f.key]=o;return r}).length;
+      return n||B[f.key]===v?`<button class="chip" id="f-${f.key}-${v}" data-k="${f.key}" data-v="${v}" aria-pressed="${B[f.key]===v}">${l}<small>${n}</small></button>`:"";}).join("");
+    return opts?`<div class="frow"><div class="qlabel">${f.label}</div><div class="chips">${opts}</div></div>`:"";
+  }).join("");
+  const order=w=>LV.indexOf(w.lv);
+  let list=W.filter(w=>match(w));
+  if(B.sort==="easy") list.sort((a,b)=>order(a)-order(b)||b.id-a.id);
+  else if(B.sort==="hard") list.sort((a,b)=>order(b)-order(a)||b.id-a.id);
+  else list.sort((a,b)=>b.id-a.id);
+  const any=B.lv||B.age||B.mood||B.use||B.ps||B.q;
+  $("#resetB").hidden=!any;
+  $("#count").textContent=`작품 ${list.length}개`;
+  $("#grid").innerHTML=list.length?list.map(w=>`<a class="item" href="${w.url}" target="_blank" rel="noopener">
+      <span class="t">${TYPE_LABEL[w.type]}</span>
+      <b>${w.title}</b>
+      <span class="d">${w.d}</span>
+      <span class="tags"><span class="lv lv-${w.lv}">${w.lv}</span>${w.ages.map(a=>`<span class="tag">${AGE_LABEL[a]}</span>`).join("")}<span class="tag">${w.mood}</span>${w.use.map(u=>`<span class="tag use">${u==="공개수업"?"공개수업 추천":u==="시범"?"시범 추천":"겨루기"}</span>`).join("")}</span>
+      <span class="row"><span class="go">작품 보러 가기 →</span></span>
+    </a>`).join(""):`<p class="sub">조건에 맞는 작품이 없어요. 필터를 하나 풀어 보세요.</p>`;
+}
+const refocus=id=>document.getElementById(id)?.focus();
+$("#tabs").addEventListener("click",e=>{const c=e.target.closest(".chip");if(!c)return;B.tab=c.dataset.v;if(B.tab!=="품새")B.ps=null;renderShop();refocus(c.id);});
+$("#filters").addEventListener("click",e=>{const c=e.target.closest(".chip");if(!c)return;const k=c.dataset.k;B[k]=B[k]===c.dataset.v?null:c.dataset.v;renderShop();refocus(c.id);});
+$("#resetB").addEventListener("click",()=>{Object.assign(B,{lv:null,age:null,mood:null,use:null,ps:null,q:""});$("#search").value="";renderShop();});
+$("#search").addEventListener("input",e=>{B.q=e.target.value.trim();renderShop();});
+$("#sort").addEventListener("change",e=>{B.sort=e.target.value;renderShop();});
+
+renderPlans();renderShop();
+</script>
+
+</body>
+</html>
